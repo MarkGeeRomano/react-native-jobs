@@ -1,12 +1,27 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, AsyncStorage } from 'react-native'
+import { AppLoading } from 'expo'
+import _ from 'lodash'
 
 import Slides from '../components/Slides'
 
 class WelcomeScreen extends React.Component {
+  state = { token: null }
+
   onComplete = () => this.props.navigation.navigate('auth')
 
+  componentWillMount = async () => {
+    const token = await AsyncStorage.getItem('fb_token')
+    token
+      ? this.props.navigation.navigate('map')
+      : this.setState({ token: false })
+  }
+
   render() {
+    if (_.isNull(this.state.token)) {
+      return <AppLoading />
+    }
+
     return (
       <View style={styles.container}>
         <Slides

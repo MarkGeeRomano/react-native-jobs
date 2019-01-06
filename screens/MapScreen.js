@@ -1,11 +1,34 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
+import { MapView } from 'expo'
 
 class MapsScreen extends React.Component {
+  state = {
+    mapLoaded: false,
+    region: {
+      longitude: -122,
+      latitude: 37,
+      longitudeDelta: .04,
+      latitudeDelta: .09
+    }
+  }
+
+  componentDidMount = () => this.setState({ mapLoaded: true })
+
   render() {
-    return(
-      <View>
-        <Text>MapsScreen</Text>
+    if (this.state.mapLoaded === false) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <ActivityIndicator size="large"/>
+        </View>
+      )
+    }
+    return (
+      <View style={{ flex: 1 }}>
+        <MapView
+          style={{ flex: 1 }}
+          region={this.state.region}
+        />
       </View>
     )
   }

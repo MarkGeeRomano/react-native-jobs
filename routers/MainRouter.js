@@ -9,11 +9,9 @@ import DeckScreen from '../screens/DeckScreen'
 const MainNavigator = createBottomTabNavigator({
   welcome: WelcomeScreen,
   auth: AuthScreen,
-  main: createBottomTabNavigator({
-    map: MapScreen,
-    deck: DeckScreen,
-    review: ReviewRouter
-  })
+  map: MapScreen,
+  deck: DeckScreen,
+  review: ReviewRouter
 })
 
 export default createAppContainer(MainNavigator)
