@@ -1,6 +1,12 @@
 import React from 'react'
-import { View, Text, Platform } from 'react-native'
-import { Button } from 'react-native-elements'
+import {
+  View,
+  Text,
+  Platform,
+  ScrollView
+} from 'react-native'
+import { Button, Card } from 'react-native-elements'
+import { connect } from 'react-redux'
 
 class ReviewScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -16,13 +22,40 @@ class ReviewScreen extends React.Component {
     headerStyle: { marginTop: Platform.OS === 'android' ? 20 : 0 }
   })
 
+  renderLikedJobs() {
+    return this.props.likedJobs.map(job => (
+      <Card key={job.id}>
+        <View style={{ height: 200 }}>
+          <View>
+            <Text style={styles.italics}>{job.name}</Text>
+            <Text style={styles.italics}>{job.location.address1}</Text>
+          </View>
+        </View>
+      </Card>
+    ))
+  }
+
   render() {
     return (
       <View>
-        <Text>ReviewScreen</Text>
+        <ScrollView>
+          {this.renderLikedJobs()}
+        </ScrollView>
       </View>
     )
   }
 }
 
-export default ReviewScreen
+const styles = {
+  detailWrapper: {
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+
+  italics: { fontStyle: 'italic'}
+}
+
+const mapStateToProps = ({ likedJobs }) => ({ likedJobs })
+
+export default connect(mapStateToProps)(ReviewScreen)

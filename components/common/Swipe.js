@@ -7,6 +7,7 @@ import {
   LayoutAnimation,
   UIManager
 } from 'react-native'
+import { Platform } from 'expo-core';
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SWIPE_THRESHOLD = .25 * SCREEN_WIDTH
@@ -15,7 +16,8 @@ const SWIPE_OUT_DURATION = 250
 class Deck extends React.Component {
   static defaultProps = {
     onSwipeRight: () => { },
-    onSwipeLeft: () => { }
+    onSwipeLeft: () => { },
+    keyProp: 'id'
   }
 
   constructor() {
@@ -24,8 +26,9 @@ class Deck extends React.Component {
     const position = new Animated.ValueXY()
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderMove: (e, gesture) =>
-        position.setValue({ x: gesture.dx, y: gesture.dy }),
+
+      onPanResponderMove: (e, gesture) => position.setValue({ x: gesture.dx, y: gesture.dy }),
+      
       onPanResponderRelease: (e, gesture) => {
         if (gesture.dx > SWIPE_THRESHOLD) {
           this.forceSwipe('right')
@@ -98,13 +101,13 @@ class Deck extends React.Component {
       return this.props.renderNoMoreCards()
     }
 
-    return this.props.data.map((item, i) => {
+    const deck = this.props.data.map((item, i) => {
       if (i < this.state.index) {
         return null
       } else if (i === this.state.index) {
         return (
           <Animated.View
-            key={item.id}
+            key={item[this.props.keyProp]}
             style={[this.getCardStyle(), styles.cardStyle]}
             {...this.state.panResponder.panHandlers}
           >
@@ -114,7 +117,7 @@ class Deck extends React.Component {
       } else {
         return (
           <Animated.View
-            key={item.id}
+            key={item[this.props.keyProp]}
             style={{
               ...styles.cardStyle,
               top: 10 * (i - this.state.index)
@@ -124,7 +127,9 @@ class Deck extends React.Component {
           </Animated.View>
         )
       }
-    }).reverse()
+    })
+
+    return Platform.OS === 'android' ? deck : deck.reverse()
   }
 
   render() {
